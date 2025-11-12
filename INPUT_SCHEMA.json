@@ -1,24 +1,82 @@
 {
+  "schemaVersion": 1,
   "title": "TikTok Top Ads Scraper Input",
   "type": "object",
   "properties": {
     "keyword": {
       "title": "Keyword",
-      "type": "string",
-      "description": "Palavra-chave a pesquisar no TikTok Top Ads (ex: 'hair oil')."
+      "type": ["string", "array"],
+      "description": "Palavra-chave ou array de palavras-chave a pesquisar no TikTok Top Ads (ex.: 'hair clip').",
+      "editor": "json"
     },
     "country": {
       "title": "Country Code",
       "type": "string",
-      "description": "Código do país (ex: 'ES', 'IT', 'RO').",
-      "default": "ES"
+      "description": "Código do país (ex.: 'ES', 'IT', 'RO').",
+      "default": "ES",
+      "editor": "textfield"
     },
-    "limit": {
-      "title": "Limit",
+    "maxResults": {
+      "title": "Max results",
       "type": "integer",
-      "description": "Número máximo de anúncios a recolher.",
-      "default": 10
+      "description": "Número máximo de anúncios a coletar do Top Ads do TikTok.",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 500,
+      "editor": "textfield"
+    },
+    "objective": {
+      "title": "Objective",
+      "type": "string",
+      "enum": [
+        "Conversions",
+        "Traffic",
+        "App Installs",
+        "Video Views",
+        "Reach",
+        "Lead Generation",
+        "Product Sales"
+      ],
+      "description": "Objetivo da campanha no Creative Center do TikTok.",
+      "default": "Conversions",
+      "editor": "dropdown"
+    },
+    "time": {
+      "title": "Time",
+      "type": "string",
+      "enum": [
+        "Last 7 Days",
+        "Last 30 Days",
+        "Last 180 Days"
+      ],
+      "description": "Período de tempo para extrair anúncios.",
+      "default": "Last 30 Days",
+      "editor": "dropdown"
+    },
+    "adLanguage": {
+      "title": "Language",
+      "type": "string",
+      "enum": ["en", "es", "fr", "pt"],
+      "description": "Idioma preferido dos anúncios.",
+      "default": "en",
+      "editor": "dropdown"
+    },
+    "likes": {
+      "title": "Likes percentile",
+      "type": "string",
+      "enum": [
+        "Top 1~20%",
+        "Top 21~40%",
+        "Top 41~60%",
+        "Top 61~80%",
+        "Top 81~100%"
+      ],
+      "description": "Faixa de likes para filtrar anúncios.",
+      "default": "Top 1~20%",
+      "editor": "dropdown"
     }
   },
-  "required": ["keyword"]
+  "required": [
+    "keyword"
+  ]
 }
