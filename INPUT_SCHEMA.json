@@ -1,9 +1,24 @@
 {
+  "title": "TikTok Top Ads Scraper Input",
   "type": "object",
   "properties": {
-    "keyword": { "type": "string", "title": "Keyword to search", "default": "hair clip" },
-    "country": { "type": "string", "title": "Country code", "default": "ES" },
-    "limit": { "type": "integer", "title": "Max items", "default": 20 }
+    "keyword": {
+      "title": "Keyword",
+      "type": "string",
+      "description": "Palavra-chave a pesquisar no TikTok Top Ads (ex: 'hair oil')."
+    },
+    "country": {
+      "title": "Country Code",
+      "type": "string",
+      "description": "Código do país (ex: 'ES', 'IT', 'RO').",
+      "default": "ES"
+    },
+    "limit": {
+      "title": "Limit",
+      "type": "integer",
+      "description": "Número máximo de anúncios a recolher.",
+      "default": 10
+    }
   },
   "required": ["keyword"]
 }
