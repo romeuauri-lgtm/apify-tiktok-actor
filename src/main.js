@@ -19,11 +19,8 @@ Apify.main(async () => {
 
     log.info('Input recebido', input);
 
-    const browser = await Apify.launchPlaywright({
-        headless: true,
-        stealth: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    // CORREÇÃO: remover headless/stealth args
+    const browser = await Apify.launchPlaywright();
     const page = await browser.newPage();
 
     // ✅ User-agent e viewport realistas
@@ -36,18 +33,15 @@ Apify.main(async () => {
         await page.goto('https://ads.tiktok.com/business/creativecenter/inspiration/topads/pc/en', { waitUntil: 'domcontentloaded' });
         log.info('Página inicial do TikTok Creative Center carregada');
 
-        // 🔗 Geração de URL de pesquisa
         const searchUrl = `https://ads.tiktok.com/business/creativecenter/inspiration/topads/pc/en?country=${country}&language=${adLanguage}&keyword=${encodeURIComponent(keyword)}`;
         await page.goto(searchUrl, { waitUntil: 'domcontentloaded' });
         log.info(`Página de resultados carregada: ${searchUrl}`);
 
-        // ⏳ Esperar até que os anúncios sejam realmente renderizados
         await page.waitForFunction(() => {
             const cards = document.querySelectorAll('.card-container, .ad-card');
             return cards.length > 0;
         }, { timeout: 20000 }).catch(() => log.warning('Nenhum anúncio visível após 20s'));
 
-        // 🧩 Extração dos anúncios
         const adsData = await page.evaluate(() => {
             const ads = [];
             document.querySelectorAll('.card-container, .ad-card').forEach(card => {
