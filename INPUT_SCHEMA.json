@@ -23,7 +23,7 @@
       "default": 50,
       "minimum": 1,
       "maximum": 500,
-      "editor": "textfield"
+      "editor": "number"
     },
     "objective": {
       "title": "Objective",
