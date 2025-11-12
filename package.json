@@ -4,7 +4,8 @@
   "type": "module",
   "main": "src/main.js",
   "scripts": {
-    "start": "node src/main.js"
+    "start": "node src/main.js",
+    "postinstall": "npx playwright install --with-deps"
   },
   "dependencies": {
     "apify": "^2.3.2",
