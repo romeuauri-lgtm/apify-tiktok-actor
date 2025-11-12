@@ -1,12 +1,10 @@
 {
   "actorSpecification": 1,
-  "name": "romeuauri-lgtm/tiktok-top-ads",
+  "name": "tiktok-top-ads",
   "version": "1.0.0",
-  "buildTag": "v1.0.0",
   "docker": {
     "image": "apify/actor-node-playwright:20"
   },
-  "environmentVariables": {},
   "defaultRunOptions": {
     "build": "latest"
   }
