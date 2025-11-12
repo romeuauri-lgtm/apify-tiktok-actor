@@ -1,8 +1,11 @@
 {
-  "name": "your-username-or-org/tiktok-top-ads",
+  "actorSpecification": 1,
+  "name": "romeuauri-lgtm/tiktok-top-ads",
   "version": "1.0.0",
   "buildTag": "v1.0.0",
-  "docker": {
-    "build": "node:18"
+  "dockerfile": "./Dockerfile",
+  "environmentVariables": {},
+  "defaultRunOptions": {
+    "build": "latest"
   }
 }
