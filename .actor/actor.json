@@ -1,1 +1,8 @@
-
+{
+  "name": "your-username-or-org/tiktok-top-ads",
+  "version": "1.0.0",
+  "buildTag": "v1.0.0",
+  "docker": {
+    "build": "node:18"
+  }
+}

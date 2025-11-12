@@ -1,1 +1,9 @@
-
+{
+  "type": "object",
+  "properties": {
+    "keyword": { "type": "string", "title": "Keyword to search", "default": "hair clip" },
+    "country": { "type": "string", "title": "Country code", "default": "ES" },
+    "limit": { "type": "integer", "title": "Max items", "default": 20 }
+  },
+  "required": ["keyword"]
+}

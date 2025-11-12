@@ -1,1 +1,12 @@
-
+{
+  "name": "apify-tiktok-actor",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "dependencies": {
+    "apify": "^2.3.0",
+    "playwright": "^1.40.0"
+  }
+}
