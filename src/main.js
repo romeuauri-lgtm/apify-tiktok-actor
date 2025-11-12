@@ -1,26 +1,49 @@
-// src/main.js
 import Apify from 'apify';
-const { log } = Apify;
+const { log } = Apify.utils;
 
 Apify.main(async () => {
-    const input = await Apify.getInput() || {};
-    const { keyword = 'hair clip', country = 'ES', limit = 20 } = input;
+    const input = await Apify.getInput();
+    const { adLanguage, country, keyword, likes = "Top 1~20%", maxResults = 5, objective = "Video Views", time = "Last 180 Days" } = input;
 
-    // CORREÇÃO: usar launchPlaywright()
-    const browser = await Apify.launchPlaywright({
-        launchOptions: { headless: true },
-    });
+    if (!adLanguage || !country || !keyword) {
+        throw new Error("Campos obrigatórios faltando: adLanguage, country, keyword");
+    }
+
+    log.info('Input recebido', input);
+
+    const browser = await Apify.launchPlaywrightBrowser({ headless: true });
     const context = await browser.newContext();
     const page = await context.newPage();
 
-    await page.goto('https://ads.tiktok.com/business/creativecenter/inspiration/topads/', { waitUntil: 'networkidle' });
-    await page.waitForTimeout(5000);
+    try {
+        await page.goto('https://www.tiktok.com/');
+        log.info('Página inicial do TikTok carregada');
 
-    const title = await page.title();
-    const cookies = await context.cookies();
+        const searchUrl = `https://www.tiktok.com/business/en-US/creative-center/search?keyword=${encodeURIComponent(keyword)}&adLanguage=${adLanguage}&country=${country}`;
+        await page.goto(searchUrl, { waitUntil: 'networkidle' });
+        log.info('Página de resultados de Ads carregada');
 
-    await Apify.pushData({ input: { keyword, country, limit }, meta: { title, timestamp: new Date().toISOString() }, cookies });
+        await page.waitForSelector('.ad-card', { timeout: 10000 }).catch(() => log.warning('Nenhum anúncio encontrado'));
 
-    await browser.close();
-    log.info('✅ Actor finished successfully');
+        const adsData = await page.evaluate(() => {
+            const ads = [];
+            document.querySelectorAll('.ad-card').forEach(card => {
+                ads.push({
+                    title: card.querySelector('.ad-title')?.innerText || null,
+                    views: card.querySelector('.ad-views')?.innerText || null,
+                });
+            });
+            return ads;
+        });
+
+        log.info('Ads coletados', adsData);
+        await Apify.pushData(adsData);
+        log.info('Dados salvos no dataset');
+
+    } catch (err) {
+        log.error('Erro durante scraping', err);
+    } finally {
+        await browser.close();
+        log.info('Browser fechado');
+    }
 });
