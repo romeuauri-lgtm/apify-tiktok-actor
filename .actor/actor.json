@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "buildTag": "v1.0.0",
   "docker": {
-    "build": "ghcr.io/apify/actor-node-playwright:20"
+    "image": "ghcr.io/apify/actor-node-playwright:20"
   },
   "environmentVariables": {},
   "defaultRunOptions": {
