@@ -11,7 +11,7 @@ Apify.main(async () => {
 
     log.info('Input recebido', input);
 
-    const browser = await Apify.launchPlaywright({ headless: true });
+    const browser = await Apify.launchPlaywright();
     const context = await browser.newContext();
     const page = await context.newPage();
 
