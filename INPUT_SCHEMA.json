@@ -39,7 +39,7 @@
       ],
       "description": "Objetivo da campanha no Creative Center do TikTok.",
       "default": "Conversions",
-      "editor": "dropdown"
+      "editor": "select"
     },
     "time": {
       "title": "Time",
@@ -51,7 +51,7 @@
       ],
       "description": "Período de tempo para extrair anúncios.",
       "default": "Last 30 Days",
-      "editor": "dropdown"
+      "editor": "select"
     },
     "adLanguage": {
       "title": "Language",
@@ -59,7 +59,7 @@
       "enum": ["en", "es", "fr", "pt"],
       "description": "Idioma preferido dos anúncios.",
       "default": "en",
-      "editor": "dropdown"
+      "editor": "select"
     },
     "likes": {
       "title": "Likes percentile",
@@ -73,7 +73,7 @@
       ],
       "description": "Faixa de likes para filtrar anúncios.",
       "default": "Top 1~20%",
-      "editor": "dropdown"
+      "editor": "select"
     }
   },
   "required": [
