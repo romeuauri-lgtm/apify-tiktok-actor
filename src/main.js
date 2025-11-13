@@ -21,7 +21,6 @@ Apify.main(async () => {
 
     // ✅ Usar diretamente o browser/contexto já fornecido pelo Apify
     const browser = await Apify.launchPlaywright({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
         defaultViewport: { width: 1366, height: 768 },
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     });
