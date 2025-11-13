@@ -21,7 +21,6 @@ Apify.main(async () => {
 
     // ✅ Usar diretamente o browser/contexto já fornecido pelo Apify
     const browser = await Apify.launchPlaywright({
-        stealth: true,
         headless: true, // não precisa mais passar para newContext
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
         defaultViewport: { width: 1366, height: 768 },
