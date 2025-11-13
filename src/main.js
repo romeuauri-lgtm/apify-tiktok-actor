@@ -35,10 +35,19 @@ Apify.main(async () => {
         await page.goto(searchUrl, { waitUntil: 'domcontentloaded' });
         log.info(`Página de resultados carregada: ${searchUrl}`);
 
+        // 🕐 Espera os anúncios ficarem visíveis
         await page.waitForFunction(() => {
             const cards = document.querySelectorAll('.card-container, .ad-card');
             return cards.length > 0;
-        }, { timeout: 20000 }).catch(() => log.warning('Nenhum anúncio visível após 20s'));
+        }, { timeout: 180000 }).catch(() => log.warning('Nenhum anúncio visível após 20s'));
+
+        // 🧭 Espera extra com scroll para garantir renderização completa
+        await page.evaluate(async () => {
+            for (let i = 0; i < 5; i++) {
+                window.scrollBy(0, 1000);
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        });
 
         const adsData = await page.evaluate(() => {
             const ads = [];
