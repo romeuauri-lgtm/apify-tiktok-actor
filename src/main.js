@@ -19,13 +19,17 @@ Apify.main(async () => {
 
     log.info('Input recebido', input);
 
-    // ✅ Corrigido: userAgent e viewport passados no contexto
-    const browser = await Apify.launchPlaywright();
-    const context = await browser.newContext({
-        viewport: { width: 1366, height: 768 },
+    // ✅ Usar diretamente o browser/contexto já fornecido pelo Apify
+    const browser = await Apify.launchPlaywright({
+        stealth: true,
+        headless: true, // não precisa mais passar para newContext
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        defaultViewport: { width: 1366, height: 768 },
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     });
-    const page = await context.newPage();
+
+    // ✅ Usar o contexto padrão retornado
+    const page = await browser.newPage();
 
     try {
         await page.goto('https://ads.tiktok.com/business/creativecenter/inspiration/topads/pc/en', { waitUntil: 'domcontentloaded' });
