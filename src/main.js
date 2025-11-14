@@ -94,6 +94,10 @@ Apify.main(async () => {
             log.warning('⚠️ Nenhum anúncio encontrado — capturando HTML para debug');
             const html = await page.content();
             log.debug(`🧩 HTML parcial capturado (primeiros 800 caracteres): ${html.slice(0, 800)}...`);
+
+            // 🔥 ADICIONADO: salvar HTML completo
+            await Apify.setValue('ERROR_HTML', html, { contentType: 'text/html' });
+            log.info('🧾 HTML completo salvo em Key-value store como ERROR_HTML');
         }
 
         log.info('💾 Salvando dados no dataset...');
@@ -113,7 +117,7 @@ Apify.main(async () => {
             log.error('❌ Falha ao capturar screenshot', sErr);
         }
 
-        // ⚠️ HTML para debug
+        // ⚠️ HTML para debug (fallback)
         try {
             const html = await page.content();
             await Apify.setValue('ERROR_HTML', html, { contentType: 'text/html' });
