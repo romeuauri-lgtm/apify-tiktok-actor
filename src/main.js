@@ -1,7 +1,9 @@
 import Apify from 'apify';
+import fs from 'fs';
 const { log } = Apify.utils;
 
 Apify.main(async () => {
+    const startTime = Date.now();
     log.info('🚀 Actor iniciado - Iniciando execução principal');
 
     const input = await Apify.getInput();
@@ -22,19 +24,32 @@ Apify.main(async () => {
         throw new Error("Campos obrigatórios faltando: adLanguage, country, keyword");
     }
 
-    // ✅ Inicializa browser via Apify
+    // =======================
+    // 📌 BROWSER LAUNCH DEBUG
+    // =======================
     log.info('🌐 Iniciando browser com Playwright...');
-    const browser = await Apify.launchPlaywright({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-    });
-    log.info('✅ Browser iniciado com sucesso');
+    let browser;
+
+    try {
+        browser = await Apify.launchPlaywright({
+            userAgent:
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+        });
+        log.info('✅ Browser iniciado com sucesso');
+    } catch (e) {
+        log.error('❌ Falha ao iniciar Playwright!', e);
+        throw e;
+    }
 
     const page = await browser.newPage();
     log.info('📄 Nova página aberta no navegador');
 
     try {
         log.info('➡️ Acessando página inicial do TikTok Creative Center...');
-        await page.goto('https://ads.tiktok.com/business/creativecenter/inspiration/topads/pc/en', { waitUntil: 'domcontentloaded' });
+        await page.goto(
+            'https://ads.tiktok.com/business/creativecenter/inspiration/topads/pc/en',
+            { waitUntil: 'domcontentloaded' }
+        );
         log.info('✅ Página inicial carregada com sucesso');
 
         const searchUrl = `https://ads.tiktok.com/business/creativecenter/inspiration/topads/pc/en?country=${country}&language=${adLanguage}&keyword=${encodeURIComponent(keyword)}`;
@@ -49,7 +64,7 @@ Apify.main(async () => {
             return cards.length > 0;
         }, { timeout: 180000 }).catch(() => log.warning('⚠️ Nenhum anúncio visível após 3 minutos'));
 
-        // 🧭 Rolagem extra para renderizar anúncios
+        // 🔄 SCROLL DOWN
         log.info('🔄 Executando scroll para forçar renderização completa...');
         await page.evaluate(async () => {
             for (let i = 0; i < 5; i++) {
@@ -59,6 +74,7 @@ Apify.main(async () => {
         });
         log.info('✅ Scroll concluído, iniciando extração de dados');
 
+        // EXTRAÇÃO
         const adsData = await page.evaluate(() => {
             const ads = [];
             document.querySelectorAll('.card-container, .ad-card').forEach(card => {
@@ -86,9 +102,30 @@ Apify.main(async () => {
 
     } catch (err) {
         log.error('❌ Erro durante scraping', err);
+
+        // ⚠️ Screenshot para debug
+        try {
+            log.warning('📸 Capturando screenshot da falha...');
+            await page.screenshot({ path: 'error_screenshot.png', fullPage: true });
+            await Apify.setValue('ERROR_SCREENSHOT', await fs.promises.readFile('error_screenshot.png'), { contentType: 'image/png' });
+            log.info('📸 Screenshot salva como OUTPUT -> ERROR_SCREENSHOT');
+        } catch (sErr) {
+            log.error('❌ Falha ao capturar screenshot', sErr);
+        }
+
+        // ⚠️ HTML para debug
+        try {
+            const html = await page.content();
+            await Apify.setValue('ERROR_HTML', html, { contentType: 'text/html' });
+            log.info('🧩 HTML capturado como OUTPUT -> ERROR_HTML');
+        } catch (hErr) {
+            log.error('❌ Falha ao capturar HTML', hErr);
+        }
+
     } finally {
         log.info('🧹 Fechando browser e encerrando Actor...');
         await browser.close();
-        log.info('🏁 Browser fechado - Execução concluída');
+        const runtime = ((Date.now() - startTime) / 1000).toFixed(2);
+        log.info(`🏁 Browser fechado - Execução concluída em ${runtime}s`);
     }
 });
