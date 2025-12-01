@@ -25,6 +25,26 @@ const headers = {
     'Accept-Language': 'en-US,en;q=0.9',
 };
 
+// CONFIGURAR PROXY (Essencial para evitar 40101)
+// Tenta usar Residential Proxy (US) se disponível, senão usa Datacenter (US)
+const proxyConfiguration = await Actor.createProxyConfiguration({
+    groups: ['RESIDENTIAL'],
+    countryCode: 'US',
+});
+
+// Se falhar (usuário sem acesso a residential), tenta auto/datacenter
+let proxyUrl;
+try {
+    proxyUrl = await proxyConfiguration.newUrl();
+    console.log('✅ Usando Proxy Residencial (US)');
+} catch (e) {
+    console.log('⚠️ Proxy Residencial não disponível, tentando Datacenter...');
+    const fallbackProxy = await Actor.createProxyConfiguration({ groups: ['SHADER'] }); // ou auto
+    proxyUrl = await fallbackProxy.newUrl();
+}
+
+console.log(`🌐 Proxy URL gerada: ${proxyUrl ? 'Sim' : 'Não'}`);
+
 // 1. Inicializar Sessão Anônima
 console.log('1️⃣ Inicializando sessão...');
 try {
@@ -32,7 +52,8 @@ try {
     await gotScraping({
         url: 'https://ads.tiktok.com/creative/inspiration/top-ads/library',
         cookieJar,
-        headers
+        headers,
+        proxyUrl
     });
 
     // Registrar WebID (Device ID)
@@ -46,7 +67,8 @@ try {
             referer: headers['Referer'],
         },
         cookieJar,
-        responseType: 'json'
+        responseType: 'json',
+        proxyUrl
     });
 
     const webId = webIdRes.body?.web_id;
@@ -100,6 +122,7 @@ while (collectedAds < maxResults) {
             searchParams,
             cookieJar,
             headers,
+            proxyUrl,
             responseType: 'json',
             headerGeneratorOptions: {
                 browsers: [{ name: 'chrome', minVersion: 110 }],
