@@ -26,23 +26,25 @@ const headers = {
 };
 
 // CONFIGURAR PROXY (Essencial para evitar 40101)
-// Tenta usar Residential Proxy (US) se disponível, senão usa Datacenter (US)
-const proxyConfiguration = await Actor.createProxyConfiguration({
-    groups: ['RESIDENTIAL'],
-    countryCode: 'US',
-});
-
-// Se falhar (usuário sem acesso a residential), tenta auto/datacenter
+// Tenta usar Residential Proxy (US) se disponível, senão usa AUTO
+let proxyConfiguration;
 let proxyUrl;
 const sessionId = Math.floor(Math.random() * 100000).toString(); // Session ID fixo para manter o mesmo IP
 
 try {
+    // Tentar Residential primeiro (se o usuário tiver acesso)
+    proxyConfiguration = await Actor.createProxyConfiguration({
+        groups: ['RESIDENTIAL'],
+        countryCode: 'US',
+    });
     proxyUrl = await proxyConfiguration.newUrl({ sessionId });
     console.log(`✅ Usando Proxy Residencial (US) - Session: ${sessionId}`);
 } catch (e) {
-    console.log('⚠️ Proxy Residencial não disponível, tentando Datacenter...');
-    const fallbackProxy = await Actor.createProxyConfiguration({ groups: ['SHADER'] }); // ou auto
-    proxyUrl = await fallbackProxy.newUrl({ sessionId });
+    // Fallback para AUTO (disponível em todos os planos)
+    console.log('⚠️ Proxy Residencial não disponível, usando AUTO...');
+    proxyConfiguration = await Actor.createProxyConfiguration();
+    proxyUrl = await proxyConfiguration.newUrl({ sessionId });
+    console.log(`✅ Usando Proxy AUTO - Session: ${sessionId}`);
 }
 
 console.log(`🌐 Proxy URL gerada: ${proxyUrl ? 'Sim' : 'Não'}`);
