@@ -7,7 +7,7 @@
     "start": "node src/main.js"
   },
   "dependencies": {
-    "apify": "^2.3.2",
+    "apify": "^3.2.0",
     "got-scraping": "^4.1.2",
     "tough-cookie": "^6.0.0"
   }
