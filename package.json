@@ -4,7 +4,7 @@
   "type": "module",
   "main": "src/main.js",
   "scripts": {
-    "start": "node src/main.js"
+    "start": "node test_us_endpoint.js"
   },
   "dependencies": {
     "apify": "^3.2.0",
