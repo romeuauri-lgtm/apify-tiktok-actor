@@ -43,7 +43,7 @@ try {
     // Fallback para AUTO (disponível em todos os planos)
     console.log('⚠️ Proxy Residencial não disponível, usando AUTO...');
     proxyConfiguration = await Actor.createProxyConfiguration();
-    proxyUrl = await proxyConfiguration.newUrl({ sessionId });
+    proxyUrl = await proxyConfiguration.newUrl(sessionId);
     console.log(`✅ Usando Proxy AUTO - Session: ${sessionId}`);
 }
 
