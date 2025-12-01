@@ -34,13 +34,15 @@ const proxyConfiguration = await Actor.createProxyConfiguration({
 
 // Se falhar (usuário sem acesso a residential), tenta auto/datacenter
 let proxyUrl;
+const sessionId = Math.floor(Math.random() * 100000).toString(); // Session ID fixo para manter o mesmo IP
+
 try {
-    proxyUrl = await proxyConfiguration.newUrl();
-    console.log('✅ Usando Proxy Residencial (US)');
+    proxyUrl = await proxyConfiguration.newUrl({ sessionId });
+    console.log(`✅ Usando Proxy Residencial (US) - Session: ${sessionId}`);
 } catch (e) {
     console.log('⚠️ Proxy Residencial não disponível, tentando Datacenter...');
     const fallbackProxy = await Actor.createProxyConfiguration({ groups: ['SHADER'] }); // ou auto
-    proxyUrl = await fallbackProxy.newUrl();
+    proxyUrl = await fallbackProxy.newUrl({ sessionId });
 }
 
 console.log(`🌐 Proxy URL gerada: ${proxyUrl ? 'Sim' : 'Não'}`);
